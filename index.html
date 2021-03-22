@@ -1,7 +1,278 @@
 <!doctype html>
-<html>
-	<body>
-		<h1>Hello World</h1>
-		<p>I'm hosted with GitHub Pages.</p>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title id="title_div">Points: 0</title>
+		<style>
+			body {
+				background-color: #5d7ebb;
+			}
+		</style>
+	</head>
+	<body style="text-align:center" onload="startupThings()">
+		<noscript>
+			<p><b>If you see this, then your Browser has JavaScript disabled or does not support it... you cant play this game...</b></p>
+		</noscript>
+		<div title="Points are just Points. You get them by pressing the button here.">
+			You have <b><span id="points_shown">0</span></b> [Points].
+			<button onclick="tier0()">+<span id="tier0_strenght_shown">1</span></button>
+		</div>
+		<div>
+			<button onclick="alert('There are many things that still need to be implemented, thouse are:\r\nA save System\r\nA way to show the numbers from 1e+9 till 9.99e+20 in the e format and not written out.\r\nAn exponential Cost Increase for the Tiers, if numbers get big enough you can get them for free using an Autoclicker\r\nMoooooooooooar Tiers & Prestiges\r\nBugs/Errors/Unwanted:\r\nIf prestige 1 has be bought and one has no tier 1, then the points button shows 1 less then what it really is. If tier 1 has been bought it is normal again.')">To Do</button>
+			<button onclick="alert('dev and cheat functions: Cheat if you want! :P\r\nCheating 101 in JS\r\nFirst open the console of your browser, the short cut most times is F12\r\nHow to change Values:\r\nwrite: points = [the amount of points you want]; in the console\r\nfor other Values: [the value]_amount = [the amount you want]; an example: tier2_amount = 69420;\r\nthen you need to update the amount to have it shown, but you can also just press the +1 button. Write: update_points();\r\nthe same as above applies to all Values!\r\nto show all Upgrades and Prestige Upgrades write: unhideALL();\r\nto Update all Values write updateALL();')">Cheating</button>
+		</div>
+		<p></p> <!---Used to make an [Enter]--->
+		<div id="upgrades_div" title="Upgrades are used to speed up your Point gain.">
+			Upgrades:
+			<div id="tier1_div" title="This Upgrade increases the amount of Points you get per click.">
+				Tier 1; Cost: 10 [Points]; Current Amount: <span id="tier1_amount_shown">0</span> 
+				<button onclick="tier1()">+<span id="tier1_strenght_shown">1</span></button>
+			</div>
+			<div id="tier2_div" title="This Upgrade increases the amount of Tier 1 you get per buy.">
+				Tier 2; Cost: 10 [Tier 1], 100 [Points]; Current Amount: <span id="tier2_amount_shown">0</span>
+				<button onclick="tier2()">+<span id="tier2_strenght_shown">1</span></button>
+			</div>
+			<div id="tier3_div" title="This Upgrade increases the amount of Tier 2 you get per buy.">
+				Tier 3; Cost 69 [Tier 2], 42'000 [Points]; Current Amount: <span id="tier3_amount_shown">0</span>
+				<button onclick="tier3()">+<span id="tier3_strenght_shown">1</span></button>
+			</div>
+			<!---Tier 4 preis vielleicht 1 Milliarden? 1 Billionen?--->
+		</div>
+		<p></p>
+		<div id="prestige_div" title="Prestige resets your Points and or Upgrades, but makes your Point gain even faster!">
+			Prestige:
+			<div id="prestige1_div" title="Your Point gain increases by 100% but your Upgrades and Points are rested.">
+				Prestige 1; Condition ><span id="prestige1_cost_shown">10000000</span> [Points]; Current Amount: <span id="prestige1_amount_shown">0</span>
+				<button onclick="prestige1()">+1</button>
+			</div>
+		</div>
+		<script>
+
+//vars:
+var points = 0;
+var tier0_strenght = 1;
+var tier1_amount = 0;
+var tier1_strenght = 1;
+var tier2_amount = 0;
+var tier2_strenght = 1;
+var tier3_amount = 0;
+var tier3_strenght = 1;
+var prestige1_amount = 0;
+var prestige1_cost = 10000000; //10 Millionen
+
+
+
+//update functions + show triggers:
+function update_points() {
+	document.getElementById("points_shown").innerHTML = points;
+	if (points >= 1) {upgrades_div_unhide();}
+	if (points >= 10) {tier1_div_unhide();}
+	document.getElementById("title_div").innerHTML = "Points: " + points; //Muss dass dann später noch ändern #N
+}
+function update_tier0_strenght() {
+	document.getElementById("tier0_strenght_shown").innerHTML = (tier0_strenght + tier1_amount) * (1 + prestige1_amount); //wenn tier1_amount == 0 und prestige1_amount >= 1 then the button shows 1 button strength less then what it really is #N
+}
+function update_tier1_amount() {
+	document.getElementById("tier1_amount_shown").innerHTML = tier1_amount;
+	update_tier0_strenght();
+	if (tier1_amount >= 10) {tier2_div_unhide();}
+}
+function update_tier1_strenght() {
+	document.getElementById("tier1_strenght_shown").innerHTML = tier1_strenght + tier2_amount;
+}
+function update_tier2_amount() {
+	document.getElementById("tier2_amount_shown").innerHTML = tier2_amount;
+	update_tier1_strenght();
+	if (tier2_amount >= 10) {tier3_div_unhide();}
+}
+function update_tier2_strenght() {
+	document.getElementById("tier2_strenght_shown").innerHTML = tier2_strenght + tier3_amount;
+}
+function update_tier3_amount() {
+	document.getElementById("tier3_amount_shown").innerHTML = tier3_amount;
+	update_tier2_strenght();
+	if (tier3_amount >= 1) {prestige_div_unhide();}
+	if (tier3_amount >= 10) {prestige1_div_unhide();}
+}
+function update_prestige1_amount() {
+	document.getElementById("prestige1_amount_shown").innerHTML = prestige1_amount;
+}
+function update_prestige1_cost() {
+	document.getElementById("prestige1_cost_shown").innerHTML = prestige1_cost;
+}
+
+
+
+//hide div till... functions:
+function hideAll() { //in array loop umwandeln! #N
+	var x = document.getElementById("upgrades_div");
+	x.style.display = "none";
+	var x = document.getElementById("prestige_div");
+	x.style.display = "none";
+	var x = document.getElementById("tier1_div");
+	x.style.display = "none";
+	var x = document.getElementById("tier2_div");
+	x.style.display = "none";
+	var x = document.getElementById("tier3_div");
+	x.style.display = "none";
+	var x = document.getElementById("prestige1_div");
+	x.style.display = "none";
+}
+
+
+function upgrades_div_unhide() {
+	var x = document.getElementById("upgrades_div");
+	x.style.display = "block";
+}
+function prestige_div_unhide() {
+	var x = document.getElementById("prestige_div");
+	x.style.display = "block";
+}
+function tier1_div_unhide() {
+	var x = document.getElementById("tier1_div");
+	x.style.display = "block";
+}
+function tier2_div_unhide() {
+	var x = document.getElementById("tier2_div");
+	x.style.display = "block";
+}
+function tier3_div_unhide() {
+	var x = document.getElementById("tier3_div");
+	x.style.display = "block";
+}
+function prestige1_div_unhide() {
+	var x = document.getElementById("prestige1_div");
+	x.style.display = "block";
+}
+
+
+
+//startup functions:
+function startupThings() {
+	hideAll();
+	startPopUpInfo();
+}
+
+function startPopUpInfo() {
+	alert('Hi! Thanks for playing this game! :D\r\nTo Start press the +1 Button.\r\nIf you dont Undestand something just hover your mouse over it and an explenation will pop up!\r\nPs.: Currently there is no save function.\r\nPps: Tier 3 & Prestige 1 is the current max');
+}
+
+
+
+//dev and cheat functions: Cheat if you want! :P
+//Cheating 101
+//First open the console of your browser, the short cut most times is F12
+//How to change Values:
+//write points = [the amount of points you want]; in the console
+//for other Values: [the value]_amount = [the amount you want]; an example: tier2_amount = 69420;
+//then you need to update the amount to have it shown, but you can also just press the +1 button. Write: update_points();
+//the same as above applies to all Values!
+
+//to show all Upgrades and Prestige Upgrades write: unhideALL();
+function unhideALL() {
+	upgrades_div_unhide();
+	prestige_div_unhide();
+	tier1_div_unhide();
+	tier2_div_unhide();
+	tier3_div_unhide();
+	prestige1_div_unhide();
+}
+
+//to Update all Values write updateALL();
+function updateALL() {
+	update_points();
+	update_tier0_strenght();
+	update_tier1_amount();
+	update_tier1_strenght();
+	update_tier2_amount();
+	update_tier2_strenght();
+	update_tier3_amount();
+	update_prestige1_amount();
+	update_prestige1_cost();
+}
+
+
+//reuse functions:
+function uNd(ne) { //uNd: u need -> you need
+	alert('You need more [' + ne + '] to buy this!');
+}
+function resetUpgrades() {
+	tier1_amount = 0;
+	tier2_amount = 0;
+	tier3_amount = 0;
+	
+	update_tier1_amount();
+	update_tier2_amount();
+	update_tier3_amount();
+}
+
+
+
+//restliche functions:
+function tier0() { //oh, btw I really appreciate it that you read this code! :D
+	points += (tier0_strenght + tier1_amount) * (1 + prestige1_amount);
+	update_points();
+}
+
+function tier1() {
+	if (points <= 9) {
+		uNd("Points");
+	} else {
+		points += -10;
+		tier1_amount += tier1_strenght + tier2_amount;
+		update_points();
+		update_tier1_amount();
+	}
+}
+
+function tier2() {
+	if (points <= 99) {
+		uNd("Points");
+	} else {
+		if (tier1_amount <= 9) {
+			uNd("Tier 1");
+		} else {
+			points += -100;
+			tier1_amount += -10;
+			tier2_amount += tier2_strenght + tier3_amount;
+			update_points();
+			update_tier1_amount();
+			update_tier2_amount();
+		}
+	}
+}
+
+function tier3() {
+	if (points <= 41999) {
+		uNd("Points");
+	} else {
+		if (tier2_amount <= 68) {
+			uNd("Tier 2");
+		} else {
+			points += -42000;
+			tier2_amount += -69;
+			tier3_amount += tier3_strenght;
+			update_points();
+			update_tier2_amount();
+			update_tier3_amount();
+		}
+	}
+}
+
+function prestige1() {
+	if (points <= 9999999) {
+		uNd("Points");
+	} else {
+		points = 0; //resetting Points
+		resetUpgrades();
+		prestige1_amount += 1;
+		prestige1_cost += prestige1_cost *9;
+		update_points();
+		update_prestige1_amount();
+		update_prestige1_cost();
+	}
+}
+
+		</script>
 	</body>
 </html>
